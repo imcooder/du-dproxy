@@ -1,0 +1,21 @@
+{
+    "name": "du-dproxy",
+    "version": "1.0.0",
+    "description": "dueros node dproxy",
+    "author": "imcooder <imcooder@gmail.com>",
+    "license": "MIT",
+    "repository": "git@github.com:imcooder/du-dproxy",
+    "dependencies": {
+        "assert": "^1.4.1",
+        "du-node-utils": "^1.0.0",
+        "fs": "0.0.1-security",
+        "log4js": "^2.3.3",
+        "os": "^0.1.1",
+        "request": "^2.81.0",
+        "underscore": "^1.8.3",
+        "uuid": "^3.1.0"
+    },
+    "devDependencies": {
+        "eslint": "^3.6.1"
+    }
+}
