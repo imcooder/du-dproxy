@@ -1,5 +1,6 @@
 # du-dproxy
 baidu dproxy redis
+
 [![NPM version][npm-image]][npm-url]
 [![npm download][download-image]][download-url]
 [![David deps][david-image]][david-url]
@@ -10,6 +11,7 @@ baidu dproxy redis
 [download-url]: https://npmjs.com/package/du-dproxy
 [david-image]: https://img.shields.io/david/imcooder/du-dproxy.svg
 [david-url]: https://david-dm.org/imcooder/du-dproxy
+
 ## 初始化函数
 1、init(opt)
 
