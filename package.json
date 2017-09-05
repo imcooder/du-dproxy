@@ -10,6 +10,7 @@
         "du-node-utils": "^1.0.0",
         "fs": "0.0.1-security",
         "log4js": "^2.3.3",
+        "node-ral": "^0.18.0",
         "os": "^0.1.1",
         "request": "^2.81.0",
         "underscore": "^1.8.3",

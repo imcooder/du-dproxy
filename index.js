@@ -11,8 +11,8 @@ var fs = require('fs');
 var logger = require('log4js').getLogger('node', __filename);
 var assert = require('assert');
 var commonUtil = require('du-node-utils');
-var RAL = require('yog-ral').RAL;
-var ralP = require('yog-ral').RALPromise;
+var RAL = require('node-ral').RAL;
+var ralP = require('node-ral').RALPromise;
 
 var Service = module.exports = {
     opt: {},
