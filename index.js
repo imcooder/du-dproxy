@@ -8,7 +8,6 @@
 "use strict";
 var _ = require('underscore');
 var fs = require('fs');
-var logger = require('log4js').getLogger('node', __filename);
 var assert = require('assert');
 var commonUtil = require('du-node-utils');
 var RAL = require('node-ral').RAL;
@@ -17,7 +16,7 @@ var ralP = require('node-ral').RALPromise;
 var Service = module.exports = {
     opt: {},
     init: function (opt) {
-        logger.debug('[redis]init:%j', opt);
+        console.log('[redis]init:%j', opt);
         var self = this;
         self.opt = {
             prefix: '',
@@ -28,16 +27,16 @@ var Service = module.exports = {
         self.initDB();
     },
     initRal: function(opt) {
-        logger.debug('initRal:%j', opt);
+        console.log('initRal:%j', opt);
         RAL.init(opt);
     },
     initDB: function () {
-        logger.info('[redis]initDB');
+        console.log('[redis]initDB');
         var self = this;
         return self;
     },
     closeDB: function () {
-        logger.info('[redis]closeDB');
+        console.log('[redis]closeDB');
     },
     makeKey: function (value) {
         return this.opt.prefix + commonUtil.toString(value);
@@ -77,7 +76,7 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        logger.info('logid:%s [redis]mget:%s', logid, keys);
+        console.log('logid:%s [redis]mget:%s', logid, keys);
         var self = this;
         if (!_.isArray(keys)) {
             keys = [keys];
@@ -87,7 +86,7 @@ var Service = module.exports = {
             args.push(self.makeKey(item));
         });
         if (!args) {
-            logger.error('logid:%s invalid arguments', logid);
+            console.error('logid:%s invalid arguments', logid);
             return Promise.reject(new Error('invalid arguments'));
         }
         return self.ralRequest('redis_cmd', {
@@ -96,13 +95,13 @@ var Service = module.exports = {
                 'args': args
             }
         }).then(response => {
-            //logger.debug('logid:%s [redis]mget response:%j', logid, response);
+            //console.log('logid:%s [redis]mget response:%j', logid, response);
             if (!_.has(response, 'status')) {
-                logger.error('logid:%s db error', logid);
+                console.error('logid:%s db error', logid);
                 return Promise.reject(new Error('db error'));
             }
             if (response.status !== 0) {
-                logger.error('logid:%s bad status', logid);
+                console.error('logid:%s bad status', logid);
                 return Promise.reject(new Error('bad status'));
             }
             var ret = {};
@@ -112,7 +111,7 @@ var Service = module.exports = {
                         ret[keys[idx]] = response.res[idx];
                     }
                 } else {
-                    logger.error('logid:%s response error', logid);
+                    console.error('logid:%s response error', logid);
                 }
             }
             return ret;
@@ -123,14 +122,14 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        logger.info('logid:%s [redis]setex key:%s value:%j time:%s', logid, key, value, time);
+        console.log('logid:%s [redis]setex key:%s value:%j time:%s', logid, key, value, time);
         let self = this;
         var args = [];
         args.push(self.makeKey(key));
         args.push(commonUtil.toString(time));
         args.push(commonUtil.toString(value));
         if (!args) {
-            logger.error('logid:%s invalid arguments', logid);
+            console.error('logid:%s invalid arguments', logid);
             return Promise.reject(new Error('invalid arguments'));
         }
         return self.ralRequest('redis_cmd', {
@@ -139,13 +138,13 @@ var Service = module.exports = {
                 'args': args
             }
         }).then(response => {
-            logger.debug('logid:%s [redis]setex response:%j', logid, response);
+            console.log('logid:%s [redis]setex response:%j', logid, response);
             if (!_.has(response, 'status')) {
-                logger.error('logid:%s db error', logid);
+                console.error('logid:%s db error', logid);
                 return Promise.reject(new Error('db error'));
             }
             if (response.status !== 0) {
-                logger.error('logid:%s bad status', logid);
+                console.error('logid:%s bad status', logid);
                 return Promise.reject(new Error('bad status'));
             }
             if (response.res !== 'OK') {
@@ -159,7 +158,7 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        //logger.info('logid:%s [redis]mset:', logid, data);
+        //console.log('logid:%s [redis]mset:', logid, data);
         let self = this;
         var args = [];
         _.each(data, item => {
@@ -167,11 +166,11 @@ var Service = module.exports = {
                 args.push(self.makeKey(item.key));
                 args.push(commonUtil.toString(item.value));
             } else {
-                logger.error('logid:%s bad format', logid);
+                console.error('logid:%s bad format', logid);
             }
         });
         if (!args) {
-            logger.error('logid:%s invalid arguments', logid);
+            console.error('logid:%s invalid arguments', logid);
             return Promise.reject(new Error('invalid arguments'));
         }
         return self.ralRequest('redis_cmd', {
@@ -180,13 +179,13 @@ var Service = module.exports = {
                 'args': args
             }
         }).then(response => {
-            logger.debug('logid:%s [redis]mset response:%j', logid, response);
+            console.log('logid:%s [redis]mset response:%j', logid, response);
             if (!_.has(response, 'status')) {
-                logger.error('logid:%s db error', logid);
+                console.error('logid:%s db error', logid);
                 return Promise.reject(new Error('db error'));
             }
             if (response.status !== 0) {
-                logger.error('logid:%s bad status', logid);
+                console.error('logid:%s bad status', logid);
                 return Promise.reject(new Error('bad status'));
             }
             return;
@@ -197,7 +196,7 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        logger.info('logid:%s [redis]del:%j', logid, keys);
+        console.log('logid:%s [redis]del:%j', logid, keys);
         var self = Service;
         if (!_.isArray(keys)) {
             keys = [keys];
@@ -212,13 +211,13 @@ var Service = module.exports = {
                 'args': args,
             }
         }).then(response => {
-            logger.debug('logid:%s del response:', logid, response);
+            console.log('logid:%s del response:', logid, response);
             if (!_.has(response, 'status')) {
-                logger.eror('del failed:%j', response);
+                console.eror('del failed:%j', response);
                 return Promise.reject(new Error('db error'));
             }
             if (response.status !== 0) {
-                logger.error('logid:%s del failed:%j', logid, response);
+                console.error('logid:%s del failed:%j', logid, response);
                 return Promise.reject(new Error('bad status'));
             }
             return;
@@ -243,11 +242,11 @@ var Service = module.exports = {
             }
         }).then(response => {
             if (!_.has(response, 'status')) {
-                logger.error('logid:%s hmset failed:%j', logid, response);
+                console.error('logid:%s hmset failed:%j', logid, response);
                 return Promise.reject(new Error('db error'));
             }
             if (response.status !== 0) {
-                logger.error('logid:%s hmset failed:%j', logid, response);
+                console.error('logid:%s hmset failed:%j', logid, response);
                 return Promise.reject(new Error('bad status'));
             }
             return;
@@ -258,7 +257,7 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        logger.debug('logid:%s [redis]hgetall:%j', logid, key);
+        console.log('logid:%s [redis]hgetall:%j', logid, key);
         var self = Service;
         var args = [];
         args.push(this.makeKey(key));
@@ -268,13 +267,13 @@ var Service = module.exports = {
                 'args': args,
             }
         }).then(response => {
-            logger.debug('logid:%s hgetall response:%j', logid, response);
+            console.log('logid:%s hgetall response:%j', logid, response);
             if (!_.has(response, 'status')) {
-                logger.error('logid:%s hgetall failed:%j', logid, response);
+                console.error('logid:%s hgetall failed:%j', logid, response);
                 return Promise.reject(new Error('db error'));
             }
             if (response.status !== 0) {
-                logger.error('logid:%s hgetall failed:%j', logid, response);
+                console.error('logid:%s hgetall failed:%j', logid, response);
                 return Promise.reject(new Error('bad status'));
             }
             var ret = {};
@@ -291,7 +290,7 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        logger.info('logid:%s [redis]hdel:%j', logid, key);
+        console.log('logid:%s [redis]hdel:%j', logid, key);
         var self = Service;
         var args = [];
         args.push(self.makeKey(key));
@@ -307,13 +306,13 @@ var Service = module.exports = {
                 'args': args,
             }
         }).then(response => {
-            logger.debug('logid:%s hdel response:%j', logid, response);
+            console.log('logid:%s hdel response:%j', logid, response);
             if (!_.has(response, 'status')) {
-                logger.eror('logid:%s hdel failed:%j', logid, response);
+                console.eror('logid:%s hdel failed:%j', logid, response);
                 return;
             }
             if (response.status !== 0) {
-                logger.error('logid:%s hdel failed:%j', logid, response);
+                console.error('logid:%s hdel failed:%j', logid, response);
                 return;
             }
             return;
@@ -324,7 +323,7 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        logger.debug('logid:%s [redis]lrange:%s %s-%s', logid, key, start, stop);
+        console.log('logid:%s [redis]lrange:%s %s-%s', logid, key, start, stop);
         var self = Service;
         var args = [];
         args.push(self.makeKey(key));
@@ -336,9 +335,9 @@ var Service = module.exports = {
                 'args': args,
             }
         }).then(response => {
-            logger.debug('logid:%s lrange response:%j', logid, response);
+            console.log('logid:%s lrange response:%j', logid, response);
             if (!_.has(response, 'status') || response.status !== 0) {
-                logger.error('logid:%s lrange failed:%j', logid, response);
+                console.error('logid:%s lrange failed:%j', logid, response);
                 return Promise.reject(new Error(response.msg || 'bad response'));
             }
             let res = [];
@@ -350,7 +349,7 @@ var Service = module.exports = {
             }
             return res;
         }).catch(error => {
-            logger.error('logid:%s lrange failed:%s', logid, error.stack);
+            console.error('logid:%s lrange failed:%s', logid, error.stack);
             return Promise.reject(error);
         });
     },
@@ -359,7 +358,7 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        logger.debug('logid:%s [redis]lpush:%s %j', logid, key, values);
+        console.log('logid:%s [redis]lpush:%s %j', logid, key, values);
         var self = Service;
         var args = [];
         args.push(self.makeKey(key));
@@ -378,7 +377,7 @@ var Service = module.exports = {
                 'args': args,
             }
         }).then(response => {
-            logger.debug('logid:%s lpush response:%j', logid, response);
+            console.log('logid:%s lpush response:%j', logid, response);
             if (!_.has(response, 'status')) {
                 return Promise.reject(new Error(response.msg || 'need status'));
             }
@@ -390,7 +389,7 @@ var Service = module.exports = {
             }
             return response.res;
         }).catch(error => {
-            logger.error('logid:%s lpush error:%s', logid, error.stack);
+            console.error('logid:%s lpush error:%s', logid, error.stack);
             return Promise.reject(error);
         });
     },
@@ -399,7 +398,7 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        logger.debug('logid:%s [redis]rpush:%s %j', logid, key, values);
+        console.log('logid:%s [redis]rpush:%s %j', logid, key, values);
         console.log(values);
         var self = Service;
         var args = [];
@@ -419,7 +418,7 @@ var Service = module.exports = {
                 'args': args,
             }
         }).then(response => {
-            logger.debug('logid:%s rpush response:%j', logid, response);
+            console.log('logid:%s rpush response:%j', logid, response);
             if (!_.has(response, 'status')) {
                 return Promise.reject(new Error(response.msg || 'need status'));
             }
@@ -431,7 +430,7 @@ var Service = module.exports = {
             }
             return response.res;
         }).catch(error => {
-            logger.error('logid:%s rpush error:%s', logid, error.stack);
+            console.error('logid:%s rpush error:%s', logid, error.stack);
             return Promise.reject(error);
         });
     },
@@ -440,7 +439,7 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        logger.debug('logid:%s [redis]lrem:%s %s-%s', logid, key, count, value);
+        console.log('logid:%s [redis]lrem:%s %s-%s', logid, key, count, value);
         var self = Service;
         var args = [];
         args.push(self.makeKey(key));
@@ -452,18 +451,18 @@ var Service = module.exports = {
                 'args': args,
             }
         }).then(response => {
-            logger.debug('logid:%s lrem response:%j', logid, response);
+            console.log('logid:%s lrem response:%j', logid, response);
             if (!_.has(response, 'status')) {
-                logger.eror('logid:%s lrem failed:%j', logid, response);
+                console.log('logid:%s lrem failed:%j', logid, response);
                 return;
             }
             if (response.status !== 0) {
-                logger.error('logid:%s lrem failed:%j', logid, response);
+                console.log('logid:%s lrem failed:%j', logid, response);
                 return;
             }
             return response.res;
         }).catch(error => {
-            logger.error('logid:%s lrem failed:%s', logid, error.stack);
+            console.log('logid:%s lrem failed:%s', logid, error.stack);
             return Promise.reject(error);
         });
     },
@@ -472,7 +471,7 @@ var Service = module.exports = {
             opt = {};
         }
         let logid = opt.logid || 'null';
-        logger.debug('logid:%s [redis]ltrim:%s %s-%s', logid, key, start, stop);
+        console.log('logid:%s [redis]ltrim:%s %s-%s', logid, key, start, stop);
         var self = Service;
         var args = [];
         args.push(self.makeKey(key));
@@ -484,18 +483,18 @@ var Service = module.exports = {
                 'args': args,
             }
         }).then(response => {
-            logger.debug('logid:%s ltrim response:%j', logid, response);
+            console.log('logid:%s ltrim response:%j', logid, response);
             if (!_.has(response, 'status')) {
-                logger.eror('logid:%s ltrim failed:%j', logid, response);
+                console.error('logid:%s ltrim failed:%j', logid, response);
                 return;
             }
             if (response.status !== 0) {
-                logger.error('logid:%s ltrim failed:%j', logid, response);
+                console.error('logid:%s ltrim failed:%j', logid, response);
                 return;
             }
             return;
         }).catch(error => {
-            logger.error('logid:%s ltrim error:%s', logid, error.stack);
+            console.error('logid:%s ltrim error:%s', logid, error.stack);
             return Promise.reject(error);
         });
     },

@@ -1,6 +1,6 @@
 {
     "name": "du-dproxy",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "dueros node dproxy",
     "author": "imcooder <imcooder@gmail.com>",
     "license": "MIT",
